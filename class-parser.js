@@ -12,13 +12,6 @@ if (!Array.prototype.last) {
     }
 }(function () {
         var
-            context = {
-                NONE: 'NONE',
-                STRING: 'STRING',
-                CLASS: 'CLASS',
-                NAME: 'NAME',
-                VALUE: 'VALUE'
-            },
             chars = {
                 QUOTE: '"',
                 SEMICOLON: ';',
@@ -28,9 +21,10 @@ if (!Array.prototype.last) {
             };
 
         function assert(bool, msg) {
-            if (!bool) {
-                throw new Error(msg);
+            if (bool) {
+                return;
             }
+            throw new Error(msg);
         }
         function parse(raw) {
             var
@@ -45,15 +39,6 @@ if (!Array.prototype.last) {
                 result = {},
                 isClassStart = function () {
                     return raw.substr(currentPosition, 5) === 'class' && ' \t\n\r{'.indexOf(raw[currentPosition + 5]) !== -1;
-                },
-                parseString = function () {
-                    var startPosition = currentPosition + 1;
-                    assert(raw[currentPosition] === chars.QUOTE);
-                    next();
-                    while (raw[currentPosition] !== chars.QUOTE) {
-                        next();
-                    }
-                    return raw.substr(startPosition, currentPosition - startPosition);
                 },
                 parsePropertyValue = function () {
                     var
