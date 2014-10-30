@@ -17,7 +17,9 @@ if (!Array.prototype.last) {
                 SEMICOLON: ';',
                 EQUALS: '=',
                 CURLY_OPEN: '{',
-                CURLY_CLOSE: '}'
+                CURLY_CLOSE: '}',
+                SQUARE_OPEN: '[',
+                SQUARE_CLOSE: ']'
             };
 
         function assert(bool, msg) {
@@ -62,18 +64,16 @@ if (!Array.prototype.last) {
                     return result;
 
                 },
+                isValidVarnameChar = function (char) {
+                    return (char >= '0' && char <= '9') ||
+                        (char >= 'A' && char <= 'z') ||
+                        char === '_';
+                },
                 parsePropertyName = function () {
-                    var
-                        eqPos = raw.indexOf(chars.EQUALS, currentPosition),
-                        result = raw.substr(currentPosition, eqPos - currentPosition).trim();
-
-
-                    if (eqPos === -1) {
-                        throw new Error('cannot find "="');
+                    var result = current();
+                    while (isValidVarnameChar(next())) {
+                        result += current();
                     }
-
-                    currentPosition = eqPos;
-
                     return result;
                 },
                 parseClassName = function () {
@@ -100,12 +100,7 @@ if (!Array.prototype.last) {
 
                     while(current() !== chars.CURLY_CLOSE) {
 
-                        if (isClassStart()) {
-                            parseClass(result);
-                        } else {
-                            parseProperty(result);
-                        }
-
+                        parseProperty(result);
                         parseWhitespace();
                     }
 
@@ -113,13 +108,43 @@ if (!Array.prototype.last) {
 
                     return result;
                 },
+                parseArray = function () {
+                },
                 parseProperty = function (context) {
-                    var name = parsePropertyName();
+                    var
+                        name = parsePropertyName(),
+                        value;
 
-                    assert(current() === chars.EQUALS);
-                    next();
                     parseWhitespace();
-                    context[name] = parsePropertyValue();
+
+                    if (name === 'class') {
+                        name = parsePropertyName();
+                        parseWhitespace();
+                    }
+
+                    switch (current()) {
+                        case chars.SQUARE_OPEN:
+                            assert(next() === chars.SQUARE_CLOSE);
+                            next();
+                            parseWhitespace();
+                            assert(current() === chars.EQUALS);
+                            next();
+                            parseWhitespace();
+                            value = parseArray();
+                            break;
+                        case chars.EQUALS:
+                            next();
+                            parseWhitespace();
+                            value = parsePropertyValue();
+                            break;
+                        case chars.CURLY_OPEN:
+                            value = parseClassValue();
+                            break;
+                        default:
+                            throw new Error('unexpected value at pos ' + currentPosition);
+                    }
+
+                    context[name] = value;
                     parseWhitespace();
                     assert(current() === chars.SEMICOLON);
                     next();
@@ -155,7 +180,7 @@ if (!Array.prototype.last) {
 
             parseWhitespace();
             while(current()) {
-                parseClass(result);
+                parseProperty(result);
                 next();
                 parseWhitespace();
             }

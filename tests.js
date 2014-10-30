@@ -23,6 +23,30 @@ QUnit.test("integer property", function(assert) {
     assert.deepEqual(result, expected);
 });
 
+QUnit.test("more than one value in file", function (assert) {
+    var expected = {
+        version: 12,
+        Moo: {
+            value: 1
+        }
+    };
+
+    var result = window.parse('version=12;\n\nclass Moo  {\r\n value = 1; };');
+
+    assert.deepEqual(result, expected);
+});
+
+QUnit.test("string arrays", function (assert) {
+    var expected = {
+        Moo: {
+            foo: ['bar', 'baz']
+        }
+    };
+
+    var result = window.parse('class Moo {\r\nfoo[]={"bar", "baz"}; };');
+
+    assert.deepEqual(result, expected);
+});
 
 QUnit.test("mission report", function(assert) {
 
