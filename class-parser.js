@@ -19,7 +19,9 @@ if (!Array.prototype.last) {
                 CURLY_OPEN: '{',
                 CURLY_CLOSE: '}',
                 SQUARE_OPEN: '[',
-                SQUARE_CLOSE: ']'
+                SQUARE_CLOSE: ']',
+                COMMA: ',',
+                MINUS: '-'
             };
 
         function assert(bool, msg) {
@@ -39,34 +41,47 @@ if (!Array.prototype.last) {
                     return raw[currentPosition];
                 },
                 result = {},
-                isClassStart = function () {
-                    return raw.substr(currentPosition, 5) === 'class' && ' \t\n\r{'.indexOf(raw[currentPosition + 5]) !== -1;
+                parseString = function () {
+                    var result = '';
+                    assert(current() === chars.QUOTE);
+                    next();
+                    while (current() !== chars.QUOTE && raw[currentPosition - 1] !== '\\') {
+                        result += current();
+                        next();
+                    }
+                    assert(current() === chars.QUOTE);
+                    next();
+                    return result;
+                },
+                parseNumber = function () {
+                    var result = '';
+                    if (current() === chars.MINUS) {
+                        result += current();
+                        next();
+                    }
+                    while('01234567890.'.indexOf(current()) !== -1) {
+                        result += current();
+                        next();
+                    }
+
+                    return parseFloat(result);
                 },
                 parsePropertyValue = function () {
                     var
-                        endPosition = raw.indexOf(chars.SEMICOLON, currentPosition),
                         result;
 
-                    if (endPosition === -1) {
-                        throw new Error('cannot find semicolon o.O');
-                    }
-
-                    result = raw.substr(currentPosition, endPosition -currentPosition).trim();
-
-                    if (result[0] === chars.QUOTE) {
-                        result = result.substr(1,  result.length - 2);
+                    if (current() === chars.QUOTE) {
+                        result = parseString();
                     } else {
-                        result = parseFloat(result);
+                        result = parseNumber();
                     }
-
-                    currentPosition = endPosition;
-
                     return result;
 
                 },
                 isValidVarnameChar = function (char) {
                     return (char >= '0' && char <= '9') ||
-                        (char >= 'A' && char <= 'z') ||
+                        (char >= 'A' && char <= 'Z') ||
+                        (char >= 'a' && char <= 'z') ||
                         char === '_';
                 },
                 parsePropertyName = function () {
@@ -75,21 +90,6 @@ if (!Array.prototype.last) {
                         result += current();
                     }
                     return result;
-                },
-                parseClassName = function () {
-                    var
-                        curlyPosition = raw.indexOf(chars.CURLY_OPEN, currentPosition),
-                        result;
-
-                    if (curlyPosition === -1) {
-                        throw new Error('cannot find opening brace');
-                    }
-
-                    result = raw.substr(currentPosition, curlyPosition - currentPosition).trim();
-                    currentPosition = curlyPosition;
-
-                    return result;
-
                 },
                 parseClassValue = function () {
                     var result = {};
@@ -109,6 +109,23 @@ if (!Array.prototype.last) {
                     return result;
                 },
                 parseArray = function () {
+                    var result = [];
+                    assert(current() === chars.CURLY_OPEN);
+                    next();
+                    parseWhitespace();
+                    while (current() !== chars.CURLY_CLOSE) {
+                        result.push(parsePropertyValue());
+                        parseWhitespace();
+                        if (current() === chars.COMMA) {
+                            next();
+                            parseWhitespace();
+                        } else {
+                            break;
+                        }
+
+                    }
+                    next();
+                    return result;
                 },
                 parseProperty = function (context) {
                     var
@@ -146,22 +163,6 @@ if (!Array.prototype.last) {
 
                     context[name] = value;
                     parseWhitespace();
-                    assert(current() === chars.SEMICOLON);
-                    next();
-                },
-                parseClass = function (context) {
-                    var className;
-
-                    assert(isClassStart(), 'Expected "class"');
-
-                    currentPosition += 5;
-                    parseWhitespace();
-
-                    className = parseClassName();
-                    parseWhitespace();
-                    context[className] = parseClassValue();
-                    parseWhitespace();
-
                     assert(current() === chars.SEMICOLON);
                     next();
                 },
