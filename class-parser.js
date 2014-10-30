@@ -166,6 +166,9 @@ if (!Array.prototype.last) {
     if (this === this.parent) {
         this.parse = parse;
     }
+    if (typeof module === 'object' && module) {
+        module.exports = parse;
+    } 
 
     return parse;
 }));
