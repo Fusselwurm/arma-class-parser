@@ -25,7 +25,7 @@ if (!Array.prototype.last) {
             SLASH: '/'
         };
 
-    function parse(raw) {
+    function parse(raw, options) {
         var
             currentPosition = 0,
             assert = function (bool, msg) {
@@ -103,7 +103,6 @@ if (!Array.prototype.last) {
                     ),
                     expression = raw.substr(currentPosition, posOfExpressionEnd - currentPosition);
                 assert(posOfExpressionEnd !== -1);
-                console.log(expression);
                 currentPosition = posOfExpressionEnd;
 
                 // DONT LOOK, IT HURTS
@@ -182,6 +181,12 @@ if (!Array.prototype.last) {
                 if (name === 'class') {
                     name = parsePropertyName();
                     parseWhitespace();
+                    if (current() === ':') {
+                        next();
+                        parseWhitespace();
+                        parsePropertyName();
+                        parseWhitespace();
+                    }
                 }
 
                 switch (current()) {
@@ -225,6 +230,8 @@ if (!Array.prototype.last) {
                     next();
                 }
             };
+
+        options = options || {};
 
         if (typeof raw !== 'string') {
             throw new TypeError('expecting string!');

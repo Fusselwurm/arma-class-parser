@@ -56,6 +56,20 @@ QUnit.test("simple arithmetic", function (assert) {
    assert.deepEqual(parse("x=48+0x800;"), {x: 48 + 0x800});
 });
 
+QUnit.test("ignore symbols", function (assert) {
+    var testString = "class Moo {\n" +
+        "\tfoo = xxx;\n" +
+        "\tclass xxx {};\n" +
+        "};";
+
+    assert.deepEqual(parse(testString), {Moo: {foo: NaN, xxx: {}}});
+});
+
+QUnit.test("ignore inheritance (?)", function (assert) {
+    var testString = "class Moo : foo {};";
+    assert.deepEqual(parse(testString), {Moo: {}});
+});
+
 QUnit.test("line comments", function (assert) {
 
     assert.deepEqual(parse("// foo comment"), {});
