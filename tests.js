@@ -57,6 +57,10 @@ QUnit.test("line comments", function (assert) {
 
 });
 
+QUnit.test("quote escaping by double quote -.-", function (assert) {
+   assert.deepEqual(parse('foo="bar ""haha"";";\n'), {foo: 'bar "haha";'});
+});
+
 QUnit.test("mission report", function(assert) {
 
     var expected = {
@@ -163,3 +167,4 @@ QUnit.test("mission report", function(assert) {
 
     assert.deepEqual(result, expected);
 });
+

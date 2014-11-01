@@ -58,12 +58,22 @@ if (!Array.prototype.last) {
                 return raw[currentPosition];
             },
             result = {},
+            weHaveADoubleQuote = function () {
+                return (raw.substr(currentPosition, 2).indexOf('""') === 0);
+            },
             parseString = function () {
                 var result = '';
                 assert(current() === chars.QUOTE);
                 nextWithoutCommentDetection();
-                while (current() !== chars.QUOTE && raw[currentPosition - 1] !== '\\') {
-                    result += current();
+                while (true) {
+                    if (weHaveADoubleQuote()) {
+                        result += current();
+                        nextWithoutCommentDetection();
+                    } else if (current() === chars.QUOTE) {
+                        break;
+                    } else {
+                        result += current();
+                    }
                     nextWithoutCommentDetection();
                 }
                 assert(current() === chars.QUOTE);
