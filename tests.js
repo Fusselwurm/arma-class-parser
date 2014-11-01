@@ -52,6 +52,10 @@ QUnit.test("scientific notation", function (assert) {
     assert.deepEqual(parse("x=-1.5e2;"), {x: -1.5e2});
 });
 
+QUnit.test("simple arithmetic", function (assert) {
+   assert.deepEqual(parse("x=48+0x800;"), {x: 48 + 0x800});
+});
+
 QUnit.test("line comments", function (assert) {
 
     assert.deepEqual(parse("// foo comment"), {});

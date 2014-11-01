@@ -80,18 +80,36 @@ if (!Array.prototype.last) {
                 nextWithoutCommentDetection();
                 return result;
             },
-            parseNumber = function () {
-                var result = '';
-                if (current() === chars.MINUS) {
-                    result += current();
-                    next();
+            parseNumber = function (str) {
+                str = str.trim();
+                if (str.substr(0, 2) === '0x') {
+                    return parseInt(str);
                 }
-                while('01234567890.e'.indexOf(current()) !== -1) {
-                    result += current();
-                    next();
+                if (str.match(/\-?[\d]*(\.\d)?(e\-?\d+)?/)) {
+                    return parseFloat(str);
                 }
+                throw new Error('not a number: ' + str);
+            },
+            indexOfOrMaxInt = function (str, fromPos) {
+                var pos = this.indexOf(str, fromPos);
+                return pos === -1 ? Infinity : pos;
+            },
+            parseMathExpression = function () {
+                var
+                    posOfExpressionEnd = Math.min(
+                        indexOfOrMaxInt.call(raw, chars.SEMICOLON, currentPosition),
+                        indexOfOrMaxInt.call(raw, chars.CURLY_CLOSE, currentPosition),
+                        indexOfOrMaxInt.call(raw, chars.COMMA, currentPosition)
+                    ),
+                    expression = raw.substr(currentPosition, posOfExpressionEnd - currentPosition);
+                assert(posOfExpressionEnd !== -1);
+                console.log(expression);
+                currentPosition = posOfExpressionEnd;
 
-                return parseFloat(result);
+                // DONT LOOK, IT HURTS
+                return expression.split('+').map(parseNumber).reduce(function (prev, cur) {
+                    return prev + cur;
+                }, 0);
             },
             parsePropertyValue = function () {
                 var
@@ -100,7 +118,7 @@ if (!Array.prototype.last) {
                 if (current() === chars.QUOTE) {
                     result = parseString();
                 } else {
-                    result = parseNumber();
+                    result = parseMathExpression();
                 }
                 return result;
 
