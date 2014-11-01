@@ -21,7 +21,8 @@ if (!Array.prototype.last) {
             SQUARE_OPEN: '[',
             SQUARE_CLOSE: ']',
             COMMA: ',',
-            MINUS: '-'
+            MINUS: '-',
+            SLASH: '/'
         };
 
     function parse(raw) {
@@ -37,7 +38,19 @@ if (!Array.prototype.last) {
                     'after: ' + JSON.stringify(raw.substr(currentPosition, 40))
                 );
             },
+            detectLineComment = function () {
+                var indexOfLinefeed;
+                if (current() === chars.SLASH && raw[currentPosition + 1] === chars.SLASH) {
+                    indexOfLinefeed = raw.indexOf('\n', currentPosition);
+                    currentPosition = indexOfLinefeed === -1 ? raw.length : indexOfLinefeed;
+                }
+            },
             next = function () {
+                currentPosition += 1;
+                detectLineComment();
+                return current();
+            },
+            nextWithoutCommentDetection = function () {
                 currentPosition += 1;
                 return current();
             },
@@ -48,13 +61,13 @@ if (!Array.prototype.last) {
             parseString = function () {
                 var result = '';
                 assert(current() === chars.QUOTE);
-                next();
+                nextWithoutCommentDetection();
                 while (current() !== chars.QUOTE && raw[currentPosition - 1] !== '\\') {
                     result += current();
-                    next();
+                    nextWithoutCommentDetection();
                 }
                 assert(current() === chars.QUOTE);
-                next();
+                nextWithoutCommentDetection();
                 return result;
             },
             parseNumber = function () {
@@ -161,6 +174,12 @@ if (!Array.prototype.last) {
                     case chars.CURLY_OPEN:
                         value = parseClassValue();
                         break;
+                    case chars.SLASH:
+                        if (next() === chars.SLASH) {
+                            currentPosition = raw.indexOf('\n', currentPosition);
+                            break;
+                        }
+                        throw new Error('unexpected value at post ' + currentPosition);
                     default:
                         throw new Error('unexpected value at pos ' + currentPosition);
                 }
@@ -183,6 +202,7 @@ if (!Array.prototype.last) {
             throw new TypeError('expecting string!');
         }
 
+        detectLineComment();
         parseWhitespace();
         while(current()) {
             parseProperty(result);

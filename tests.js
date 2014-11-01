@@ -48,6 +48,15 @@ QUnit.test("string arrays", function (assert) {
     assert.deepEqual(result, expected);
 });
 
+QUnit.test("line comments", function (assert) {
+
+    assert.deepEqual(parse("// foo comment"), {});
+    assert.deepEqual(parse("// foo comment\nx=2;"), {x: 2});
+    assert.deepEqual(parse("x=2;// foo comment"), {x: 2});
+    assert.deepEqual(parse("class Moo { // foo comment\n};"), {Moo: {}});
+
+});
+
 QUnit.test("mission report", function(assert) {
 
     var expected = {
