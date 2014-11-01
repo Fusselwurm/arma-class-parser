@@ -36,16 +36,20 @@ QUnit.test("more than one value in file", function (assert) {
     assert.deepEqual(result, expected);
 });
 
-QUnit.test("string arrays", function (assert) {
+QUnit.test("array of scalars", function (assert) {
     var expected = {
         Moo: {
-            foo: ['bar', 'baz']
+            foo: ['bar', 'baz', 1.5e2]
         }
     };
 
-    var result = window.parse('class Moo {\r\nfoo[]={"bar", "baz"}; };');
+    var result = window.parse('class Moo {\r\nfoo[]={"bar", "baz",1.5e2}; };');
 
     assert.deepEqual(result, expected);
+});
+
+QUnit.test("scientific notation", function (assert) {
+    assert.deepEqual(parse("x=-1.5e2;"), {x: -1.5e2});
 });
 
 QUnit.test("line comments", function (assert) {

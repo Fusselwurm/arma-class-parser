@@ -86,7 +86,7 @@ if (!Array.prototype.last) {
                     result += current();
                     next();
                 }
-                while('01234567890.'.indexOf(current()) !== -1) {
+                while('01234567890.e'.indexOf(current()) !== -1) {
                     result += current();
                     next();
                 }
