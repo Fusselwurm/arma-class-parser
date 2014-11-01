@@ -1,0 +1,13 @@
+{
+  "name": "arma-class-parser",
+  "version": "0.0.1",
+  "description": "Parse Armed Assault classes (like: session log, mission.sqm, ...)",
+  "keywords": ["ArmA", "Armed Assault", "parser", "Arma3"],
+  "author": "Moritz Schmidt <fusselwurm@gmail.com> (http://www.fusselwurm.de/)",
+  "files": ["class-parser.js"],
+  "main": "class-parser",
+  "repository" : {
+    "type" : "git",
+    "url" : "http://github.com/fusselwurm/arma-class-parser.git"
+  },
+}
