@@ -190,3 +190,16 @@ QUnit.test("mission report", function(assert) {
     assert.deepEqual(result, expected);
 });
 
+QUnit.test("multiline-init", function (assert) {
+    var source = document.getElementById('fixture-multiline-init').textContent;
+    var result = window.parse(source);
+    var expected = {
+        Item0: {
+            position: [1954.6425, 5.9796591, 5538.1045],
+            id: 0,
+            init: '[this, "Platoon"] call FP_fnc_setVehicleName;\nif (isServer) then {\n  [this] call FP_fnc_clearVehicle; this addWeaponCargoGlobal ["CUP_launch_M136", 1];\n  this addMagazineCargoGlobal ["1Rnd_HE_Grenade_shell", 10];\n  this addMagazineCargoGlobal [""ATMine_Range_Mag"", 6];\n};'
+        }
+    };
+    
+    assert.deepEqual(result, expected);
+});
