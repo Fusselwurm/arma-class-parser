@@ -61,6 +61,12 @@ if (!Array.prototype.last) {
             weHaveADoubleQuote = function () {
                 return (raw.substr(currentPosition, 2).indexOf('""') === 0);
             },
+            weHaveAStringLineBreak = function () {
+                return raw.substr(currentPosition, 6).indexOf('" \\n "') === 0;
+            },
+            forwardToNextQuote = function () {
+                currentPosition = indexOfOrMaxInt.call(raw, chars.QUOTE, currentPosition + 1);
+            },
             parseString = function () {
                 var result = '';
                 assert(current() === chars.QUOTE);
@@ -69,6 +75,10 @@ if (!Array.prototype.last) {
                     if (weHaveADoubleQuote()) {
                         result += current();
                         nextWithoutCommentDetection();
+                    } else if (weHaveAStringLineBreak()) {
+                        result += '\n';
+                        next();
+                        forwardToNextQuote();
                     } else if (current() === chars.QUOTE) {
                         break;
                     } else {

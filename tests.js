@@ -197,7 +197,7 @@ QUnit.test("multiline-init", function (assert) {
         Item0: {
             position: [1954.6425, 5.9796591, 5538.1045],
             id: 0,
-            init: '[this, "Platoon"] call FP_fnc_setVehicleName;\nif (isServer) then {\n  [this] call FP_fnc_clearVehicle; this addWeaponCargoGlobal ["CUP_launch_M136", 1];\n  this addMagazineCargoGlobal ["1Rnd_HE_Grenade_shell", 10];\n  this addMagazineCargoGlobal [""ATMine_Range_Mag"", 6];\n};'
+            init: '[this, "Platoon"] call FP_fnc_setVehicleName;\nif (isServer) then {\n  [this] call FP_fnc_clearVehicle; this addWeaponCargoGlobal ["CUP_launch_M136", 1];\n  this addMagazineCargoGlobal ["1Rnd_HE_Grenade_shell", 10];\n  this addMagazineCargoGlobal ["ATMine_Range_Mag", 6];\n};'
         }
     };
     
