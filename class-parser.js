@@ -124,7 +124,9 @@ if (!Array.prototype.last) {
                 var
                     result;
 
-                if (current() === chars.QUOTE) {
+                if (current() === chars.CURLY_OPEN) {
+                    result = parseArray();
+                } else if (current() === chars.QUOTE) {
                     result = parseString();
                 } else {
                     result = parseMathExpression();
