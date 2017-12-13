@@ -1,0 +1,100 @@
+<html>
+<head>
+    <title>session report parser</title>
+    <style>
+        textarea {
+            height: 500px;
+            width: 100%;
+        }
+
+        #result textarea {
+            white-space: pre;
+        }
+
+        #result {
+            position: relative;
+        }
+
+        #result label {
+            display: inline-block;
+            cursor: pointer;
+            background: #f8f8f8;
+            padding: 8px;
+        }
+
+        #result label:hover {
+            background: #eee;
+        }
+
+        #result label textarea {
+            display: none;
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            padding: 8px;
+        }
+
+        #result label:hover textarea {
+            display: block;
+            float: right;
+            background: #eee;
+        }
+    </style>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script src="class-parser.js"></script>
+    <script src="get-slots-from-mission-sqm.js"></script>
+</head>
+<body>
+<label>
+    <textarea placeholder="hier die mission.sqm reinschmeißen pl0x" id="mission_sqm">
+    </textarea>
+</label>
+<div>
+    <button id="do_it">do it do it do it</button>
+</div>
+<div id="result">
+    <label>slot list
+        <textarea id="slotlist">
+
+        </textarea>
+    </label>
+
+</div>
+
+<script>
+    function missionReportAsHtml(report) {
+        var html = [];
+
+        html.push('<h1>' + report.mission + '</h1>');
+        html.push('<p class="introduction">Island: ' + report.island + ', Spieltyp: ' + report.gameType + '</p>');
+        html.push('<p class="introduction">Dauer: ' + parseInt(report.duration / 60, 10) + ' Minuten</p>');
+        html.push('<table><thead>%s</thead><tbody>%s</tbody>');
+        var head = '<tr><th>' + ['Spieler', 'Kills', 'Inf', 'Soft', 'Armor', 'Air', 'Players', 'Custom', 'Deaths'].join('</th><th>') + '</th></tr>\n';
+        var body = _.map(report, function (value) {
+            if (!value || !value.name) {
+                return ''; // no player
+            }
+
+            return '<tr><td>' + ([
+                value.name,
+                value.killsTotal, value.killsInfantry, value.killsSoft, value.killsArmor, value.killsAir,
+                value.killsPlayers, value.killsCustom,
+                value.killed
+            ].join('</td><td>')) + '</td></tr>';
+
+        }).join('\n');
+
+        return html.join('\n').replace('%s', head).replace('%s', body);
+    }
+
+    document.querySelector('#do_it').addEventListener('click', function (e) {
+        var raw = document.querySelector('#mission_sqm').value,
+            report = parse(raw),
+            sqm = getSlotsFromMissionSqm(report);
+
+        document.querySelector('#slotlist').textContent = '';
+    });
+</script>
+</body>
+</html>
