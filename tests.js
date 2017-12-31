@@ -200,6 +200,28 @@ QUnit.test("multiline-init", function (assert) {
             init: '[this, "Platoon"] call FP_fnc_setVehicleName;\nif (isServer) then {\n  [this] call FP_fnc_clearVehicle; this addWeaponCargoGlobal ["CUP_launch_M136", 1];\n  this addMagazineCargoGlobal ["1Rnd_HE_Grenade_shell", 10];\n  this addMagazineCargoGlobal ["ATMine_Range_Mag", 6];\n};'
         }
     };
-    
+
+    assert.deepEqual(result, expected);
+});
+
+QUnit.test("class with translation strings", function (assert) {
+    var expected = {
+        testClass: {
+            title: "Test Class",
+            values: [0, 1],
+            texts: ["STR_UNTRANSLATED", "Translated text"],
+            default: 1
+        }
+    };
+
+    var testString = "class testClass {\n\ttitle = $STR_CLASS_TITLE;\n\tvalues[] = {0,1};\n\ttexts[] = {$STR_UNTRANSLATED, $STR_TRANSLATED};\n\tdefault = 1;\n};"
+
+    var result = window.parse(testString, {
+        translations: {
+            STR_CLASS_TITLE: 'Test Class',
+            STR_TRANSLATED: 'Translated text'
+        }
+    });
+
     assert.deepEqual(result, expected);
 });
