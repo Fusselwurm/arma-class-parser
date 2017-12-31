@@ -22,9 +22,16 @@ if (!Array.prototype.last) {
             SQUARE_CLOSE: ']',
             COMMA: ',',
             MINUS: '-',
-            SLASH: '/'
+            SLASH: '/',
+            DOLLAR: '$'
         };
 
+    /**
+     *
+     * @param {string} raw
+     * @param {Object} [options]
+     * @param {Object.<string, string>} [options.translations]
+     */
     function parse(raw, options) {
         var
             currentPosition = 0,
@@ -90,6 +97,40 @@ if (!Array.prototype.last) {
                 nextWithoutCommentDetection();
                 return result;
             },
+            parseTranslationString = function() {
+                var result = '';
+                assert(current() === chars.DOLLAR);
+                next();
+                assert(
+                    raw.substr(currentPosition, 3).indexOf('STR') === 0,
+                    'Invalid translation string beginning'
+                );
+                while (true) {
+                    if (
+                        current() === chars.SEMICOLON
+                        || (current() === chars.COMMA || current() === chars.CURLY_CLOSE)
+                    ) {
+                        break;
+                    } else {
+                        result += current();
+                    }
+                    nextWithoutCommentDetection();
+                }
+                assert(
+                    current() === chars.SEMICOLON
+                    || (current() === chars.COMMA || current() === chars.CURLY_CLOSE)
+                );
+
+                return translateString(result);
+            },
+            translateString = function(string) {
+                if(typeof options.translations === "object") {
+                    return options.translations.hasOwnProperty(string) ?
+                        options.translations[string] : string;
+                }
+
+                return string;
+            },
             parseNumber = function (str) {
                 str = str.trim();
                 if (str.substr(0, 2) === '0x') {
@@ -126,6 +167,8 @@ if (!Array.prototype.last) {
 
                 if (current() === chars.QUOTE) {
                     result = parseString();
+                } else if(current() === chars.DOLLAR) {
+                    result = parseTranslationString();
                 } else {
                     result = parseMathExpression();
                 }
