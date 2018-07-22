@@ -1,0 +1,3 @@
+dist/*.*
+web/arma-class-parser.js
+node_modules
