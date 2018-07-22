@@ -1,6 +1,6 @@
 {
   "name": "arma-class-parser",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Parse Armed Assault classes (like: session log, mission.sqm, ...)",
   "keywords": [
     "ArmA",
@@ -10,9 +10,11 @@
   ],
   "author": "Moritz Schmidt <fusselwurm@gmail.com>",
   "files": [
-    "dist/*.js"
+    "dist/*.js",
+    "dist/*.d.ts",
+    "dist/*.map.js"
   ],
-  "main": "class-parser",
+  "main": "dist/class-parser",
   "dependencies": {},
   "repository": {
     "type": "git",
