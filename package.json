@@ -1,6 +1,6 @@
 {
   "name": "arma-class-parser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Parse Armed Assault classes (like: session log, mission.sqm, ...)",
   "keywords": [
     "ArmA",
