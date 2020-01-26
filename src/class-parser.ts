@@ -10,6 +10,7 @@ const chars = {
     MINUS: '-',
     SLASH: '/',
     DOLLAR: '$',
+    ASTERISK: '*',
 };
 
 export interface Options {
@@ -126,16 +127,20 @@ export const parse = function (raw: string, options?: Options): any {
                 'after: ' + JSON.stringify(raw.substr(currentPosition, 40))
             );
         },
-        detectLineComment = function(): void {
+        detectComment = function(): void {
             let indexOfLinefeed;
             if (current() === chars.SLASH && raw[currentPosition + 1] === chars.SLASH) {
                 indexOfLinefeed = raw.indexOf('\n', currentPosition);
                 currentPosition = indexOfLinefeed === -1 ? raw.length : indexOfLinefeed;
+            } else if(current() === chars.SLASH && raw[currentPosition + 1] === chars.ASTERISK) {
+                const multilineClose = chars.ASTERISK + chars.SLASH;
+                indexOfLinefeed = raw.indexOf(multilineClose, currentPosition);
+                currentPosition = indexOfLinefeed === -1 ? raw.length : indexOfLinefeed + multilineClose.length;
             }
         },
         next = function(): string {
             currentPosition += 1;
-            detectLineComment();
+            detectComment();
             return current();
         },
         nextWithoutCommentDetection = function(): string {
@@ -280,7 +285,7 @@ export const parse = function (raw: string, options?: Options): any {
         throw new TypeError('expecting string!');
     }
 
-    detectLineComment();
+    detectComment();
     parseWhitespace();
     while(current()) {
         parseProperty(result);
