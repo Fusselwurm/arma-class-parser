@@ -108,12 +108,13 @@ export const parse = function (raw: string, options?: Options): any {
         next();
     };
     let parseWhitespace = function (): void {
-        while (
-        (' \t\r\n'.indexOf(raw[currentPosition]) !== -1) ||
-        (raw.charCodeAt(currentPosition) < 32)
-            ) {
+        while (isWhitespace()) {
             next();
         }
+    };
+    let isWhitespace = function (): boolean {
+        return (' \t\r\n'.indexOf(raw[currentPosition]) !== -1) ||
+            (raw.charCodeAt(currentPosition) < 32);
     };
     let assert = function(bool: boolean, msg: string = ''): void {
             if (bool) {
@@ -189,7 +190,12 @@ export const parse = function (raw: string, options?: Options): any {
                 ) {
                     break;
                 } else {
-                    result += current();
+                    if (isWhitespace()) {
+                        parseWhitespace();
+                        break;
+                    } else {
+                        result += current();
+                    }
                 }
                 nextWithoutCommentDetection();
             }
