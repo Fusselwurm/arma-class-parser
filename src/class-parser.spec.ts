@@ -14,16 +14,33 @@ describe('arma-class-parser', () => {
     });
 
 
-    it("parses integer property values", function() {
+    describe("parsing numbers", function() {
+        it("parses positive integer property values", function() {
+            let expected = {Moo: {value: 1}};
+            let result = parse('class Moo {\r\nvalue=1; };');
 
-        let expected = {
-            Moo: {
-                value: 1
-            }
-        };
-        let result = parse('class Moo {\r\nvalue=1; };');
+            expect(result).toEqual(expected);
+        });
+        it("parses negative integer property values", function() {
 
-        expect(result).toEqual(expected);
+            let expected = {Moo: {value: -3}};
+            let result = parse('class Moo {\r\nvalue=-3; };');
+
+            expect(result).toEqual(expected);
+        });
+
+        it("knows to parse scientific notation (negative exponent)", function () {
+            expect(parse("x=-1.5e2;")).toEqual({x: -1.5e2});
+        });
+        it("knows to parse scientific notation (implicitly positive exponent)", function () {
+            expect(parse("x=1.5e2;")).toEqual({x: 1.5e2});
+        });
+        it("knows to parse scientific notation (explicitly positive exponent)", function () {
+            expect(parse("x=+1.5e2;")).toEqual({x: 1.5e2});
+        });
+        it("parses scientific notation (negative, negative exponent prefixed w/ zeroes", function() {
+            expect(parse("x=-1.9073486e-006;")).toEqual({x: -1.9073486e-6});
+        });
     });
 
     it("finds more than one property", function () {
@@ -49,14 +66,6 @@ describe('arma-class-parser', () => {
         let result = parse('class Moo {\r\nfoo[]={"bar", "baz",1.5e2}; };');
 
         expect(result).toEqual(expected);
-    });
-
-    it("knows to parse scientific notation", function () {
-        expect(parse("x=-1.5e2;")).toEqual({x: -1.5e2});
-    });
-
-    it("can do simple arithmetic", function () {
-        expect(parse("x=48+0x800;")).toEqual({x: 48 + 0x800});
     });
 
     it("ignores symbols", function () {

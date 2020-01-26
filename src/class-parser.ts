@@ -215,15 +215,12 @@ export const parse = function (raw: string, options?: Options): any {
                 indexOfOrMaxInt.call(raw, chars.SEMICOLON, currentPosition),
                 indexOfOrMaxInt.call(raw, chars.CURLY_CLOSE, currentPosition),
                 indexOfOrMaxInt.call(raw, chars.COMMA, currentPosition)
-                ),
-                expression = raw.substr(currentPosition, posOfExpressionEnd - currentPosition);
+            );
+            const expression = raw.substr(currentPosition, posOfExpressionEnd - currentPosition);
             assert(posOfExpressionEnd !== Infinity);
             currentPosition = posOfExpressionEnd;
 
-            // DONT LOOK, IT HURTS
-            return expression.split('+').map(parseNumber).reduce(function(prev, cur) {
-                return prev + cur;
-            }, 0);
+            return +expression;
         },
         parsePropertyValue = function(): any {
             let result;
