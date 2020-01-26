@@ -82,12 +82,30 @@ describe('arma-class-parser', () => {
         expect(parse(testString)).toEqual({Moo: {}});
     });
 
-    it("ignores line comments", function () {
+    describe("comment detection", () => {
+        it("recognizes multiline comments on their own lines", () => {
+            let expected = {testClass: {values: [0, 1]}};
 
-        expect(parse("// foo comment")).toEqual({});
-        expect(parse("// foo comment\nx=2;")).toEqual({x: 2});
-        expect(parse("x=2;// foo comment")).toEqual({x: 2});
-        expect(parse("class Moo { // foo comment\n};")).toEqual({Moo: {}});
+            let testString = `
+/*
+multiline
+comment
+*/
+class testClass {
+    values[] = {0,1};
+};`;
+
+            let result = parse(testString);
+            expect(expected).toEqual(result);
+        });
+        it("recognizes line comments on their own lines", () => {
+            expect(parse("// foo comment")).toEqual({});
+            expect(parse("// foo comment\nx=2;")).toEqual({x: 2});
+        });
+        it("recognizes line comments at the end of a line", () => {
+            expect(parse("x=2;// foo comment")).toEqual({x: 2});
+            expect(parse("class Moo { // foo comment\n};")).toEqual({Moo: {}});
+        });
 
     });
 
