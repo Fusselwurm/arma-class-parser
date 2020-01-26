@@ -220,25 +220,69 @@ describe('arma-class-parser', () => {
         expect(result).toEqual(expected);
     });
 
-    it("class with translation strings", () => {
-        const expected = {
-            testClass: {
-                title: "Test Class",
-                values: [0, 1],
-                texts: ["STR_UNTRANSLATED", "Translated text"],
-                default: 1
-            }
-        };
+    describe("handling translation strings", () => {
+        it("uses translation key if no translation exists", () => {
+            const expected = {
+                testClass: {
+                    title: "Test Class",
+                    values: [0, 1],
+                    texts: ["STR_UNTRANSLATED", "Translated text"],
+                    default: 1
+                }
+            };
 
-        const testString = "class testClass {\n\ttitle = $STR_CLASS_TITLE;\n\tvalues[] = {0,1};\n\ttexts[] = {$STR_UNTRANSLATED, $STR_TRANSLATED};\n\tdefault = 1;\n};";
+            const testString = "class testClass {\n\ttitle = $STR_CLASS_TITLE;\n\tvalues[] = {0,1};\n\ttexts[] = {$STR_UNTRANSLATED, $STR_TRANSLATED};\n\tdefault = 1;\n};";
 
-        const result = parse(testString, {
-            translations: {
-                STR_CLASS_TITLE: 'Test Class',
-                STR_TRANSLATED: 'Translated text'
-            }
+            const result = parse(testString, {
+                translations: {
+                    STR_CLASS_TITLE: 'Test Class',
+                    STR_TRANSLATED: 'Translated text'
+                }
+            });
+
+            expect(result).toEqual(expected);
+        });
+        it("ignores whitespace after translation key", () => {
+            const expected = {
+                testClass: {
+                    title: "Translated title",
+                    texts: ["Translated text"],
+                }
+            };
+
+            const testString = "class testClass {\n\ttitle = $STR_CLASS_TITLE ;\n\ttexts[] = {$STR_CLASS_TEXT };};";
+
+            const result = parse(testString, {
+                translations: {
+                    STR_CLASS_TITLE: 'Translated title',
+                    STR_CLASS_TEXT: 'Translated text'
+                }
+            });
+
+            expect(result).toEqual(expected);
+
+        });
+        it("fails if whitespace found *within* translation key (simple property)", () => {
+            const testString = "class testClass {\n\ttitle = $STR_CLA SS_TITLE;\n\ttexts[] = {$STR_CLASS_TEXT};};";
+
+            expect(() => parse(testString, {
+                translations: {
+                    STR_CLASS_TITLE: 'Translated title',
+                    STR_CLASS_TEXT: 'Translated text'
+                }
+            })).toThrow();
         });
 
-        expect(result).toEqual(expected);
+        it("fails if whitespace found *within* translation key (array)", () => {
+            const testString = "class testClass {\n\ttitle = $STR_CLASS_TITLE;\n\ttexts[] = {$STR_CLA SS_TEXT};};";
+
+            expect(() => parse(testString, {
+                translations: {
+                    STR_CLASS_TITLE: 'Translated title',
+                    STR_CLASS_TEXT: 'Translated text'
+                }
+            })).toThrow();
+        });
+
     });
 });
