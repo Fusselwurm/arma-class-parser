@@ -34,5 +34,9 @@
     "build:amd": "tsc --module amd --outFile dist/class-parser.amd.js",
     "build:web": "tsc && webpack -p",
     "build": "tsc"
+  },
+  "jest": {
+    "verbose": true,
+    "testURL": "http://localhost/"
   }
 }
