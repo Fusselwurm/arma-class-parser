@@ -2,3 +2,4 @@ dist/*.ts
 dist/*.js
 dist/*.map
 node_modules
+docs/*.js
