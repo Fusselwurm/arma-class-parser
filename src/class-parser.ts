@@ -161,7 +161,7 @@ export const parse = function (raw: string, options?: Options): any {
             let result = '';
             assert(current() === chars.QUOTE);
             nextWithoutCommentDetection();
-            while (true) {
+            while (current()) {
                 if (weHaveADoubleQuote()) {
                     result += current();
                     nextWithoutCommentDetection();

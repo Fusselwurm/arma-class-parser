@@ -12,7 +12,11 @@ describe('arma-class-parser', () => {
 
         expect(result).toEqual(expected);
     });
-
+    describe("syntax error handling", function () {
+        it("stomachs hanging quote", function () {
+            expect(() => parse("v=\"")).toThrow();
+        })
+    });
 
     describe("parsing numbers", function() {
         it("parses positive integer property values", function() {
