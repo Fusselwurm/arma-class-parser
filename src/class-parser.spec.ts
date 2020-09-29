@@ -4,6 +4,9 @@ describe('arma-class-parser', () => {
     it("is defined", function() {
         expect(typeof parse).toBe('function')
     });
+    it("complains on invalid input type", function() {
+        expect(() => parse([] as any)).toThrowError(TypeError)
+    });
 
     it("parses empty object", function() {
 
@@ -68,6 +71,17 @@ describe('arma-class-parser', () => {
         };
 
         let result = parse('class Moo {\r\nfoo[]={"bar", "baz",1.5e2}; };');
+
+        expect(result).toEqual(expected);
+    });
+    it("understands nested array properties", function () {
+        let expected = {
+            Moo: {
+                foo: [[], ['foo'], [1,2]]
+            }
+        };
+
+        let result = parse('class Moo {\r\nfoo[]={{}, {"foo"}, {1,2}}; };');
 
         expect(result).toEqual(expected);
     });
