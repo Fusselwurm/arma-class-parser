@@ -23,14 +23,15 @@
   "devDependencies": {
     "@types/jest": "^22.1.1",
     "@types/node": "^12.0.0",
-    "jest": "^22.3.0",
+    "codecov": "^3.7.2",
+    "jest": "^26.4.2",
     "ts-loader": "^4.4.1",
     "typescript": "^3.5.1",
     "webpack": "^4.12.1",
     "webpack-cli": "^3.0.8"
   },
   "scripts": {
-    "test": "tsc && jest",
+    "test": "tsc && jest --config jestconfig.json",
     "build:amd": "tsc --module amd --outFile dist/class-parser.amd.js",
     "build:web": "tsc && webpack -p && rm -r docs/dist",
     "build": "tsc"

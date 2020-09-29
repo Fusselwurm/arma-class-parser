@@ -42,7 +42,7 @@ export const parse = function (raw: string, options?: Options): any {
         next();
         parseWhitespace();
         while (current() !== chars.CURLY_CLOSE) {
-            result.push(parsePropertyValue());
+            result.push(parseNonArrayPropertyValue());
             parseWhitespace();
             if (current() === chars.COMMA) {
                 next();
@@ -71,7 +71,6 @@ export const parse = function (raw: string, options?: Options): any {
                 parseWhitespace();
             }
         }
-
         switch (current()) {
             case chars.SQUARE_OPEN:
                 assert(next() === chars.SQUARE_CLOSE);
@@ -85,7 +84,7 @@ export const parse = function (raw: string, options?: Options): any {
             case chars.EQUALS:
                 next();
                 parseWhitespace();
-                value = parsePropertyValue();
+                value = parseNonArrayPropertyValue();
                 break;
             case chars.CURLY_OPEN:
                 value = parseClassValue();
@@ -161,7 +160,7 @@ export const parse = function (raw: string, options?: Options): any {
             let result = '';
             assert(current() === chars.QUOTE);
             nextWithoutCommentDetection();
-            while (true) {
+            while (current()) {
                 if (weHaveADoubleQuote()) {
                     result += current();
                     nextWithoutCommentDetection();
@@ -211,16 +210,6 @@ export const parse = function (raw: string, options?: Options): any {
 
             return translateString(result);
         },
-        parseNumber = function(str): number {
-            str = str.trim();
-            if (str.substr(0, 2) === '0x') {
-                return parseInt(str);
-            }
-            if (str.match(/\-?[\d]*(\.\d)?(e\-?\d+)?/)) {
-                return parseFloat(str);
-            }
-            throw new Error('not a number: ' + str);
-        },
         parseMathExpression = function() {
             const posOfExpressionEnd = Math.min(
                 indexOfOrMaxInt.call(raw, chars.SEMICOLON, currentPosition),
@@ -233,11 +222,11 @@ export const parse = function (raw: string, options?: Options): any {
 
             return +expression;
         },
-        parsePropertyValue = function(): any {
+        parseNonArrayPropertyValue = function(): any {
             let result;
 
             if (current() === chars.CURLY_OPEN) {
-                result = parseArray();
+                result = parseArray(); // on nested array property values
             } else if (current() === chars.QUOTE) {
                 result = parseString();
             } else if (current() === chars.DOLLAR) {
@@ -246,7 +235,6 @@ export const parse = function (raw: string, options?: Options): any {
                 result = parseMathExpression();
             }
             return result;
-
         },
         isValidVarnameChar = function(char): boolean {
             return (char >= '0' && char <= '9') ||
