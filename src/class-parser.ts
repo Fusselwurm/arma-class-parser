@@ -211,16 +211,6 @@ export const parse = function (raw: string, options?: Options): any {
 
             return translateString(result);
         },
-        parseNumber = function(str): number {
-            str = str.trim();
-            if (str.substr(0, 2) === '0x') {
-                return parseInt(str);
-            }
-            if (str.match(/\-?[\d]*(\.\d)?(e\-?\d+)?/)) {
-                return parseFloat(str);
-            }
-            throw new Error('not a number: ' + str);
-        },
         parseMathExpression = function() {
             const posOfExpressionEnd = Math.min(
                 indexOfOrMaxInt.call(raw, chars.SEMICOLON, currentPosition),
