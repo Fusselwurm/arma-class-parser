@@ -1,5 +1,5 @@
 ![Build Status](https://github.com/Fusselwurm/arma-class-parser/workflows/build%20&amp;%20test/badge.svg)
-[![codecov](https://codecov.io/gh/Fusselwurm/arma-class-parser/branch/master/graph/badge.svg)](https://codecov.io/gh/gruppe-adler/action-release-with-hemtt)
+[![codecov](https://codecov.io/gh/Fusselwurm/arma-class-parser/branch/master/graph/badge.svg)](https://codecov.io/gh/Fusselwurm/arma-class-parser)
 see https://www.npmjs.com/package/arma-class-parser
 
 # arma-class-parser
