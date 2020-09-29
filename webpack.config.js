@@ -1,7 +1,7 @@
 module.exports = {
     entry: './src/class-parser-web.ts',
     output: {
-        path: __dirname + '/web',
+        path: __dirname + '/docs',
         filename: 'arma-class-parser.js'
     },
     resolve: {
