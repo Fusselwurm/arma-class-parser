@@ -32,7 +32,7 @@
   "scripts": {
     "test": "tsc && jest",
     "build:amd": "tsc --module amd --outFile dist/class-parser.amd.js",
-    "build:web": "tsc && webpack -p",
+    "build:web": "tsc && webpack -p && rm -r docs/dist",
     "build": "tsc"
   },
   "jest": {

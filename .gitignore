@@ -1,3 +1,4 @@
-dist/*.*
-web/arma-class-parser.js
+dist/*.ts
+dist/*.js
+dist/*.map
 node_modules

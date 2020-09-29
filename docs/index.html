@@ -1,0 +1,68 @@
+<html lang="en">
+<head>
+	<title>config parser</title>
+	<style>
+		textarea {
+			height: 500px;
+			white-space: pre;
+			width: 100%;
+		}
+		#error {
+			color: red;
+		}
+		.invalid {
+			background: #fcc;
+		}
+		.valid {
+			background: #cfc;
+		}
+	</style>
+	<script src="../dist/class-parser-web.js"></script>
+</head>
+<body>
+<label>Source<textarea placeholder="class Foo {};" id="armaConfig"></textarea></label>
+<button id="doIt">do it</button>
+<label>Update on every key stroke<input type="checkbox" id="updateOnInput" checked="checked"/></label>
+<label>Update on change (i.e. de-focus)<input type="checkbox" id="updateOnChange" checked="checked"/></label>
+<div id="error"></div>
+<label>Result<textarea id="json"></textarea></label>
+
+<script>
+	function update(source) {
+		let result;
+		try {
+			result = parse(source);
+		} catch (e) {
+			document.querySelector('#armaConfig').className = "invalid";
+			document.querySelector('#error').textContent = "error: " + e.message;
+			return;
+		}
+		document.querySelector('#armaConfig').className = "valid";
+		document.querySelector('#error').textContent = "";
+		document.querySelector('#json').textContent = JSON.stringify(result, null, "\t");
+	}
+
+	document.querySelector('#armaConfig').addEventListener('change', function () {
+		if (!document.querySelector('#updateOnChange').checked) {
+			document.querySelector('#armaConfig').className = "";
+			return;
+		}
+		const source = this.value;
+		update(source);
+	});
+	document.querySelector('#armaConfig').addEventListener('input', function () {
+		if (!document.querySelector('#updateOnInput').checked) {
+			document.querySelector('#armaConfig').className = "";
+			return;
+		}
+		const source = this.value;
+		update(source);
+	});
+	document.querySelector('#doIt').addEventListener('click', function () {
+		const source = document.querySelector('#armaConfig').value;
+		update(source);
+	});
+
+</script>
+</body>
+</html>
