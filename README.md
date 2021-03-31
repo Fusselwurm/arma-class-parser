@@ -10,7 +10,7 @@ Convert Arma3 class definitions (read: configs) to JSON
 
 NodeJS
 
-# similar projects for other languages 
+# similar projects in other languages 
 
 * Python : https://github.com/overfl0/Armaclass
 * C++ : https://github.com/BrettMayson/Config2JSON
