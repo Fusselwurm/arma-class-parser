@@ -12,7 +12,9 @@ NodeJS
 
 # similar projects for other languages 
 
-Python: https://github.com/overfl0/Armaclass
+* Python : https://github.com/overfl0/Armaclass
+* C++ : https://github.com/BrettMayson/Config2JSON
+* Ruby: https://github.com/nicolasFlinois/sqm2json
 
 # I am not devloper
 
