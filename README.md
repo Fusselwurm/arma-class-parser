@@ -15,6 +15,7 @@ NodeJS
 * Python : https://github.com/overfl0/Armaclass
 * C++ : https://github.com/BrettMayson/Config2JSON
 * Ruby: https://github.com/nicolasFlinois/sqm2json
+* Rust: https://github.com/arma3modorganizer/SQM_Parser
 
 # I am not devloper
 
