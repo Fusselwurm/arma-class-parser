@@ -187,7 +187,7 @@ export const parse = function (raw: string, options?: Options): any {
                 raw.substr(currentPosition, 3).indexOf('STR') === 0,
                 'Invalid translation string beginning'
             );
-            while (true) {
+            while (current()) {
                 if (
                     current() === chars.SEMICOLON
                     || (current() === chars.COMMA || current() === chars.CURLY_CLOSE)
