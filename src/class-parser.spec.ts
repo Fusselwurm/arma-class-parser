@@ -319,6 +319,10 @@ class testClass {
                 }
             })).toThrow();
         });
+        it("fails with exception on EOF within translation key", () => {
+            const testString = "class testClass{ title = $STR_CLASS_TIT";
 
+            expect(() => parse(testString)).toThrow();
+        });
     });
 });
