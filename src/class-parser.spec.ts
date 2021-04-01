@@ -85,6 +85,16 @@ describe('arma-class-parser', () => {
 
         expect(result).toEqual(expected);
     });
+    it("doesnt skip a character after the semicolon", function () {
+        let expected = {
+            foo: [1, 2, 3],
+            moo: [1, 2, 3]
+        };
+
+        let result = parse('foo[]={1,2,3};moo[]={1,2,3};');
+
+        expect(result).toEqual(expected);
+    });
 
     it("ignores symbols", function () {
         let testString = "class Moo {\n" +

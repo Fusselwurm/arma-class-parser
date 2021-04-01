@@ -277,7 +277,6 @@ export const parse = function (raw: string, options?: Options): any {
     parseWhitespace();
     while(current()) {
         parseProperty(result);
-        next();
         parseWhitespace();
     }
 
