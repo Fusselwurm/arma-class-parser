@@ -134,7 +134,14 @@ class testClass {
             expect(parse("x=2;// foo comment")).toEqual({x: 2});
             expect(parse("class Moo { // foo comment\n};")).toEqual({Moo: {}});
         });
-
+        it("detects inline comments between property name and value", () => {
+            expect(parse("class X {foo/*comment*/=42;};")).toEqual({X: {foo:42}});
+            expect(parse("class X {foo=/*comment*/42;};")).toEqual({X: {foo:42}});
+        });
+        it("fails on invalid shit with broken comment syntax", () => {
+            expect(() => parse("class X {foo///=42;};")).toThrow();
+            expect(() => parse("class X {foo/*/=42;};")).toThrow();
+        });
     });
 
     it("can handle escaped quotes", function () {
@@ -267,7 +274,7 @@ class testClass {
     });
 
     describe("handling translation strings", () => {
-        it("uses translation key if no translation exists", () => {
+        it("uses translation key if specific translation is missing", () => {
             const expected = {
                 testClass: {
                     title: "Test Class",
@@ -287,6 +294,18 @@ class testClass {
             });
 
             expect(result).toEqual(expected);
+        });
+        it("uses translation key if no translations are given", () => {
+            const expected = {
+                testClass: {
+                    text: "STR_UNTRANSLATED",
+                }
+            };
+
+            const testString = "class testClass { text = $STR_UNTRANSLATED;};";
+
+            expect(parse(testString, {})).toEqual(expected);
+            expect(parse(testString)).toEqual(expected);
         });
         it("ignores whitespace after translation key", () => {
             const expected = {
