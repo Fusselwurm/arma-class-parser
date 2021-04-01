@@ -89,15 +89,6 @@ export const parse = function (raw: string, options?: Options): any {
             case chars.CURLY_OPEN:
                 value = parseClassValue();
                 break;
-            case chars.SLASH:
-                if (next() === chars.SLASH) {
-                    currentPosition = raw.indexOf('\n', currentPosition);
-                    break;
-                }
-                throw new Error('unexpected value at post ' + currentPosition);
-            case chars.DOLLAR:
-                result = parseTranslationString();
-                break;
             default:
                 throw new Error('unexpected value at pos ' + currentPosition);
         }
@@ -127,14 +118,13 @@ export const parse = function (raw: string, options?: Options): any {
             );
         },
         detectComment = function(): void {
-            let indexOfLinefeed;
             if (current() === chars.SLASH && raw[currentPosition + 1] === chars.SLASH) {
-                indexOfLinefeed = raw.indexOf('\n', currentPosition);
+                const indexOfLinefeed = raw.indexOf('\n', currentPosition);
                 currentPosition = indexOfLinefeed === -1 ? raw.length : indexOfLinefeed;
             } else if(current() === chars.SLASH && raw[currentPosition + 1] === chars.ASTERISK) {
                 const multilineClose = chars.ASTERISK + chars.SLASH;
-                indexOfLinefeed = raw.indexOf(multilineClose, currentPosition);
-                currentPosition = indexOfLinefeed === -1 ? raw.length : indexOfLinefeed + multilineClose.length;
+                const indexOfCommentEnd = raw.indexOf(multilineClose, currentPosition + 2);
+                currentPosition = indexOfCommentEnd === -1 ? raw.length : indexOfCommentEnd + multilineClose.length;
             }
         },
         next = function(): string {
