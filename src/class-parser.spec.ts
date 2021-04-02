@@ -138,6 +138,9 @@ class testClass {
             expect(parse("class X {foo/*comment*/=42;};")).toEqual({X: {foo:42}});
             expect(parse("class X {foo=/*comment*/42;};")).toEqual({X: {foo:42}});
         });
+        xit("detects inline comments within array values", () => { // not entirely sure if thats valid
+            expect(parse("foo[]={/*haha*/42/*hehe*/,43};")).toEqual({foo:[42,43]});
+        });
         it("fails on invalid shit with broken comment syntax", () => {
             expect(() => parse("class X {foo///=42;};")).toThrow();
             expect(() => parse("class X {foo/*/=42;};")).toThrow();
