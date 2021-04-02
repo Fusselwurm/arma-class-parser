@@ -24,7 +24,7 @@ function indexOfOrMaxInt(str: string, fromPos: number) {
     return pos === -1 ? Infinity : pos;
 }
 
-function isValidVarnameChar(char): boolean {
+function isValidVarnameChar(char: string): boolean {
     return (char >= '0' && char <= '9') ||
         (char >= 'A' && char <= 'Z') ||
         (char >= 'a' && char <= 'z') ||
@@ -32,13 +32,14 @@ function isValidVarnameChar(char): boolean {
 }
 
 class Parser {
-    private currentPosition: number = 0
-    private result = {};
+    private currentPosition: number;
+    private result: object;
 
     constructor(
         private raw: string,
         private options: Options = {},
         ) {
+        this.reset();
     }
 
     public parse(): any {
@@ -54,15 +55,18 @@ class Parser {
         return this.result;
     }
 
-
     public reset() {
         this.currentPosition = 0;
         this.result = {};
     }
 
-
     private current(): string {
         return this.raw[this.currentPosition] || '';
+    }
+
+    private consume(chars: string): void {
+        this.assert(this.raw.substr(this.currentPosition, chars.length) === chars);
+        this.next();
     }
 
     public translateString(string: string): string {
@@ -114,15 +118,13 @@ class Parser {
             case 'delete': // skip delete statements
                 this.parsePropertyName();
                 this.parseWhitespace();
-                this.assert(this.current() === chars.SEMICOLON);
-                this.next();
+                this.consume(chars.SEMICOLON);
                 return;
             case 'import': // skip import statements
                 this.parseWhitespace();
                 this.parsePropertyName();
                 this.parseWhitespace();
-                this.assert(this.current() === chars.SEMICOLON);
-                this.next();
+                this.consume(chars.SEMICOLON);
                 return;
         }
 
@@ -131,8 +133,7 @@ class Parser {
                 this.assert(this.next() === chars.SQUARE_CLOSE);
                 this.next();
                 this.parseWhitespace();
-                this.assert(this.current() === chars.EQUALS);
-                this.next();
+                this.consume(chars.EQUALS);
                 this.parseWhitespace();
                 value = this.parseArray();
                 break;
@@ -150,8 +151,7 @@ class Parser {
 
         context[name] = value;
         this.parseWhitespace();
-        this.assert(this.current() === chars.SEMICOLON);
-        this.next();
+        this.consume(chars.SEMICOLON);
     }
     private parseWhitespace(): void {
         while (this.isWhitespace()) {
@@ -227,8 +227,7 @@ class Parser {
 
     private parseTranslationString(): string {
         let result: string = '';
-        this.assert(this.current() === chars.DOLLAR);
-        this.next();
+        this.consume(chars.DOLLAR);
         this.assert(
             this.raw.substr(this.currentPosition, 3).indexOf('STR') === 0,
             'Invalid translation string beginning'
@@ -295,8 +294,7 @@ class Parser {
     private parseClassValue(): any {
         const result = {};
 
-        this.assert(this.current() === chars.CURLY_OPEN);
-        this.next();
+        this.consume(chars.CURLY_OPEN);
         this.parseWhitespace();
 
         while (this.current() !== chars.CURLY_CLOSE) {
