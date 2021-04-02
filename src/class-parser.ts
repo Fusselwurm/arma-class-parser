@@ -61,16 +61,32 @@ export const parse = function (raw: string, options?: Options): any {
 
         parseWhitespace();
 
-        if (name === 'class') {
-            name = parsePropertyName();
-            parseWhitespace();
-            if (current() === ':') {
+        switch (name) {
+            case 'class':
+                name = parsePropertyName();
+                parseWhitespace();
+                if (current() === ':') { // skip parent class declaration
+                    next();
+                    parseWhitespace();
+                    parsePropertyName();
+                    parseWhitespace();
+                }
+                break;
+            case 'delete': // skip delete statements
+                parsePropertyName();
+                parseWhitespace();
+                assert(current() === chars.SEMICOLON);
                 next();
+                return;
+            case 'import': // skip import statements
                 parseWhitespace();
                 parsePropertyName();
                 parseWhitespace();
-            }
+                assert(current() === chars.SEMICOLON);
+                next();
+                return;
         }
+
         switch (current()) {
             case chars.SQUARE_OPEN:
                 assert(next() === chars.SQUARE_CLOSE);
