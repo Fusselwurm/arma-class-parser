@@ -1,5 +1,4 @@
 import {parse} from './class-parser';
-import { createTracing } from "trace_events";
 
 describe('arma-class-parser', () => {
     it("is defined", function() {
