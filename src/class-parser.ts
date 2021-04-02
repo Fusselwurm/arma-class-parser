@@ -37,7 +37,7 @@ class Parser {
 
     constructor(
         private raw: string,
-        private options: Options = {},
+        private options: Options,
         ) {
         this.reset();
     }
@@ -66,7 +66,8 @@ class Parser {
 
     private consume(chars: string): void {
         this.assert(this.raw.substr(this.currentPosition, chars.length) === chars);
-        this.next();
+        this.currentPosition += chars.length;
+        this.detectComment();
     }
 
     public translateString(string: string): string {
@@ -81,8 +82,7 @@ class Parser {
 
     private parseArray(): any[] {
         const result = [];
-        this.assert(this.current() === chars.CURLY_OPEN);
-        this.next();
+        this.consume(chars.CURLY_OPEN);
         this.parseWhitespace();
         while (this.current() !== chars.CURLY_CLOSE) {
             result.push(this.parseNonArrayPropertyValue());
@@ -130,8 +130,8 @@ class Parser {
 
         switch (this.current()) {
             case chars.SQUARE_OPEN:
-                this.assert(this.next() === chars.SQUARE_CLOSE);
-                this.next();
+
+                this.consume(chars.SQUARE_OPEN + chars.SQUARE_CLOSE);
                 this.parseWhitespace();
                 this.consume(chars.EQUALS);
                 this.parseWhitespace();
