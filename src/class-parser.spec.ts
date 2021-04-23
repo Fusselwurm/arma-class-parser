@@ -379,6 +379,21 @@ class testClass {
                 expect(parse(testString)).toEqual({testClass: {}});
             });
         });
-
+    });
+    describe("import … from …", () => {
+        it("is rejected without name", () => {
+            const testString = "class testClass { import Foo from; }; "
+            expect(() => parse(testString)).toThrow();
+        });
+        describe("is ignored", () => {
+            it("within classes", () => {
+                const testString = "class testClass { import Foo from Bar; };"
+                expect(parse(testString)).toEqual({testClass: {}});
+            });
+            it("at start of file", () => {
+                const testString = "import Foo from Bar; class testClass {};"
+                expect(parse(testString)).toEqual({testClass: {}});
+            });
+        });
     });
 });
