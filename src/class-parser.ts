@@ -82,6 +82,13 @@ export const parse = function (raw: string, options?: Options): any {
                 parseWhitespace();
                 parsePropertyName();
                 parseWhitespace();
+                if (current() === chars.SEMICOLON) {
+                    next();
+                    return;
+                }
+                assert(parsePropertyName() === 'from');
+                parseWhitespace();
+                parsePropertyName();
                 assert(current() === chars.SEMICOLON);
                 next();
                 return;
