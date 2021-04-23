@@ -354,4 +354,46 @@ class testClass {
             expect(() => parse(testString)).toThrow();
         });
     });
+    describe("delete", () => {
+        it("is rejected without name", () => {
+            const testString = "class testClass { delete; }; "
+            expect(() => parse(testString)).toThrow();
+        });
+        it("ignores delete statements", () => {
+            const testString = "class testClass { delete Foo; };";
+            expect(parse(testString)).toEqual({testClass: {}});
+        });
+    });
+    describe("import", () => {
+        it("is rejected without name", () => {
+            const testString = "class testClass { import; }; "
+            expect(() => parse(testString)).toThrow();
+        });
+        describe("is ignored", () => {
+            it("within classes", () => {
+                const testString = "class testClass { import Foo; };"
+                expect(parse(testString)).toEqual({testClass: {}});
+            });
+            it("at start of file", () => {
+                const testString = "import Foo; class testClass {};"
+                expect(parse(testString)).toEqual({testClass: {}});
+            });
+        });
+    });
+    describe("import … from …", () => {
+        it("is rejected without name", () => {
+            const testString = "class testClass { import Foo from; }; "
+            expect(() => parse(testString)).toThrow();
+        });
+        describe("is ignored", () => {
+            it("within classes", () => {
+                const testString = "class testClass { import Foo from Bar; };"
+                expect(parse(testString)).toEqual({testClass: {}});
+            });
+            it("at start of file", () => {
+                const testString = "import Foo from Bar; class testClass {};"
+                expect(parse(testString)).toEqual({testClass: {}});
+            });
+        });
+    });
 });
