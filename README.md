@@ -6,6 +6,14 @@
 
 Convert Arma3 class definitions (read: configs) to JSON
 
+## limitations
+
+completely ignores
+
+* inheritance
+* delete
+* import
+
 # prerequisites
 
 NodeJS
