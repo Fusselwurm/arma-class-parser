@@ -396,4 +396,11 @@ class testClass {
             });
         });
     });
+
+    describe("weird shit: ", () => {
+        it("unquoted array element as string: ", () => {
+            const testString = "y[] = {[};";
+            expect(parse(testString)).toEqual({y: ["["]});
+        })
+    })
 });
