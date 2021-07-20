@@ -12,7 +12,8 @@
   "files": [
     "dist/*.js",
     "dist/*.d.ts",
-    "dist/*.map.js"
+    "dist/*.map.js",
+    "cli/*.*
   ],
   "main": "dist/class-parser",
   "dependencies": {},
