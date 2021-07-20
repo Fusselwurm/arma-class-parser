@@ -19,7 +19,7 @@ export interface Options {
     }
 }
 
-export const parse = function (raw: string, options: Options = {}): any {
+export const parse = function (raw: string, options: Options = {}): object {
     let currentPosition: number = 0;
     let current = function (): string {
         return raw[currentPosition] || '';

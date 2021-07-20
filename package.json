@@ -13,7 +13,7 @@
     "dist/*.js",
     "dist/*.d.ts",
     "dist/*.map.js",
-    "cli/*.*
+    "src/class-parser.ts"
   ],
   "main": "dist/class-parser",
   "dependencies": {},
