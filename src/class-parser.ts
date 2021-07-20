@@ -140,6 +140,11 @@ export const parse = function (raw: string, options?: Options): any {
                 'after: ' + JSON.stringify(raw.substr(currentPosition, 40))
             );
         },
+        discardBOM = function(): void {
+            if (current() === '\ufeff') {
+                next();
+            }
+        },
         detectComment = function(): void {
             if (current() === chars.SLASH && raw[currentPosition + 1] === chars.SLASH) {
                 const indexOfLinefeed = raw.indexOf('\n', currentPosition);
@@ -286,6 +291,7 @@ export const parse = function (raw: string, options?: Options): any {
         throw new TypeError('expecting string!');
     }
 
+    discardBOM();
     detectComment();
     parseWhitespace();
     while(current()) {
