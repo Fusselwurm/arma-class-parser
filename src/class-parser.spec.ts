@@ -105,6 +105,11 @@ describe('arma-class-parser', () => {
         expect(parse(testString)).toEqual({Moo: {foo: NaN, xxx: {}}});
     });
 
+    it("ignores an initial BOM", function () {
+        let testString = "\ufeffclass Moo{};"
+        expect(parse(testString)).toEqual({Moo: {}});
+    });
+
     it("ignores inheritance (?)", function () {
         let testString = "class Moo : foo {};";
         expect(parse(testString)).toEqual({Moo: {}});
