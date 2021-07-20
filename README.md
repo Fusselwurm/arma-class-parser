@@ -16,7 +16,9 @@ completely ignores
 
 # prerequisites
 
-NodeJS
+NodeJS or Deno
+
+### in NodeJS
 
 # similar projects in other languages 
 
