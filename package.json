@@ -36,7 +36,8 @@
     "test": "tsc && jest --config jestconfig.json",
     "build:amd": "tsc --module amd --moduleResolution node --outFile dist/class-parser.amd.js",
     "build:web": "tsc && webpack -p && rm -r docs/dist",
-    "build": "tsc"
+    "build": "tsc",
+    "build:release": "npm run build:web && npm run build:amd"
   },
   "jest": {
     "verbose": true,
