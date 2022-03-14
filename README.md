@@ -25,7 +25,7 @@ NodeJS
 * Ruby: https://github.com/nicolasFlinois/sqm2json
 * Rust: https://github.com/arma3modorganizer/SQM_Parser
 
-# I am not devloper
+# I just want to use it
 
 I see. Here you go: http://fusselwurm.github.io/arma-class-parser/
 
