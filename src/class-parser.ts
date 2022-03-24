@@ -19,7 +19,7 @@ export interface Options {
     }
 }
 
-export const parse = function (raw: string, options?: Options): any {
+export const parse = function (raw: string, options: Options = {}): object {
     let currentPosition: number = 0;
     let current = function (): string {
         return raw[currentPosition] || '';
@@ -33,7 +33,7 @@ export const parse = function (raw: string, options?: Options): any {
         return string;
     };
     let indexOfOrMaxInt = function (str: string, fromPos: number) {
-        const pos = this.indexOf(str, fromPos);
+        const pos = raw.indexOf(str, fromPos);
         return pos === -1 ? Infinity : pos;
     };
     let parseArray = function (): any[] {
@@ -55,7 +55,7 @@ export const parse = function (raw: string, options?: Options): any {
         next();
         return result;
     };
-    let parseProperty = function (context): any {
+    let parseProperty = function (context: { [index:string]: any }): any {
         let name = parsePropertyName(),
             value;
 
@@ -172,7 +172,7 @@ export const parse = function (raw: string, options?: Options): any {
             return raw.substr(currentPosition, 6).indexOf('" \\n "') === 0;
         },
         forwardToNextQuote = function(): void {
-            currentPosition = indexOfOrMaxInt.call(raw, chars.QUOTE, currentPosition + 1);
+            currentPosition = indexOfOrMaxInt(chars.QUOTE, currentPosition + 1);
         },
         parseString = function(): any {
             let result = '';
@@ -230,9 +230,9 @@ export const parse = function (raw: string, options?: Options): any {
         },
         parseMathExpression = function() {
             const posOfExpressionEnd = Math.min(
-                indexOfOrMaxInt.call(raw, chars.SEMICOLON, currentPosition),
-                indexOfOrMaxInt.call(raw, chars.CURLY_CLOSE, currentPosition),
-                indexOfOrMaxInt.call(raw, chars.COMMA, currentPosition)
+                indexOfOrMaxInt(chars.SEMICOLON, currentPosition),
+                indexOfOrMaxInt(chars.CURLY_CLOSE, currentPosition),
+                indexOfOrMaxInt(chars.COMMA, currentPosition)
             );
             const expression = raw.substr(currentPosition, posOfExpressionEnd - currentPosition);
             assert(posOfExpressionEnd !== Infinity);
@@ -254,7 +254,7 @@ export const parse = function (raw: string, options?: Options): any {
             }
             return result;
         },
-        isValidVarnameChar = function(char): boolean {
+        isValidVarnameChar = function(char: string): boolean {
             return (char >= '0' && char <= '9') ||
                 (char >= 'A' && char <= 'Z') ||
                 (char >= 'a' && char <= 'z') ||
@@ -284,8 +284,6 @@ export const parse = function (raw: string, options?: Options): any {
 
             return result;
         };
-
-    options = options || {};
 
     if (typeof raw !== 'string') {
         throw new TypeError('expecting string!');

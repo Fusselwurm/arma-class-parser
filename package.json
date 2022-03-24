@@ -10,9 +10,11 @@
   ],
   "author": "Moritz Schmidt <fusselwurm@gmail.com>",
   "files": [
+    "cli/*.*",
     "dist/*.js",
     "dist/*.d.ts",
-    "dist/*.map.js"
+    "dist/*.map.js",
+    "src/class-parser.ts"
   ],
   "main": "dist/class-parser",
   "dependencies": {},
@@ -32,9 +34,10 @@
   },
   "scripts": {
     "test": "tsc && jest --config jestconfig.json",
-    "build:amd": "tsc --module amd --outFile dist/class-parser.amd.js",
+    "build:amd": "tsc --module amd --moduleResolution node --outFile dist/class-parser.amd.js",
     "build:web": "tsc && webpack -p && rm -r docs/dist",
-    "build": "tsc"
+    "build": "tsc",
+    "build:release": "npm run build:web && npm run build:amd"
   },
   "jest": {
     "verbose": true,
